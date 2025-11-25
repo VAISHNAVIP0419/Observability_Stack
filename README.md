@@ -50,3 +50,10 @@ Verify running containers using:
 ```bash
 docker ps
 ```
+### Access Services:
+
+Frontend: http://localhost:3000
+
+
+
+Backend API: http://localhost:5000
