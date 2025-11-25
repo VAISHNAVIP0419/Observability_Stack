@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  # MongoDB Database Service
+  mongodb:
+    image: mongo:latest
+    container_name: observability_mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
+      MONGO_INITDB_DATABASE: tasks_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    networks:
+      - observability_network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Backend Service
+  backend:
+    build:
+      context: ./Application-Code/backend
+      dockerfile: Dockerfile
+    container_name: observability_backend
+    ports:
+      - "5000:3500"
+    environment:
+      - MONGO_CONN_STR=mongodb://admin:password123@mongodb:27017/tasks_db?authSource=admin
+      - USE_DB_AUTH=true
+      - MONGO_USERNAME=admin
+      - MONGO_PASSWORD=password123
+      - PORT=3500
+      - NODE_ENV=production
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - observability_network
+    restart: unless-stopped
+
+  # Frontend Service
+  frontend:
+    build:
+      context: ./Application-Code/frontend
+      dockerfile: Dockerfile
+    container_name: observability_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_BACKEND_URL=http://localhost:5000/api/tasks
+    depends_on:
+      - backend
+    networks:
+      - observability_network
+    restart: unless-stopped
+
+volumes:
+  mongodb_data:
+  mongodb_config:
+
+networks:
+  observability_network:
+    driver: bridge
