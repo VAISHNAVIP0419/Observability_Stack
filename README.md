@@ -45,15 +45,21 @@ To start the services, run:
 ```bash
 docker compose up -d
 ```
+<img width="921" height="74" alt="Screenshot 2025-11-25 231109" src="https://github.com/user-attachments/assets/6216ddc5-097e-4842-9c8c-c34531ade63e" />
 
 Verify running containers using:
 ```bash
 docker ps
 ```
+<img width="984" height="226" alt="Screenshot 2025-11-26 001105" src="https://github.com/user-attachments/assets/437849c5-89aa-44f3-8c71-9385c247d867" />
+
 ### Access Services:
 
 Frontend: http://localhost:3000
 
-
+<img width="1365" height="679" alt="Screenshot 2025-11-25 233737" src="https://github.com/user-attachments/assets/49ff006e-403f-4798-8bd3-60fb23ef1dcf" />
 
 Backend API: http://localhost:5000
+
+<img width="1365" height="226" alt="Screenshot 2025-11-25 233754" src="https://github.com/user-attachments/assets/f6e903be-3c55-4e0c-a313-59a0e8068b3d" />
+
