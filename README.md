@@ -219,26 +219,28 @@ Create dashboard with both metrics & logs panels together for real-time monitori
 
 ### Troubleshooting
 
-- Prometheus Targets Showing “DOWN”
-  Cause: Wrong service name/port in prometheus.yml.
-  Fix: Verify target names match docker-compose service names and ports.
+#### Prometheus Targets Showing “DOWN”
+  **Cause:** Wrong service name/port in prometheus.yml.
+  **Fix:** Verify target names match docker-compose service names and ports.
 
-- Grafana Not Showing Metrics
-  Cause: Wrong datasource URL (Prometheus not reachable).
-  Fix: Set Prometheus datasource URL to http://prometheus:9090 inside Grafana.
+#### Grafana Not Showing Metrics
+  **Cause:** Wrong datasource URL (Prometheus not reachable).
+  **Fix:** Set Prometheus datasource URL to http://prometheus:9090 inside Grafana.
 
-- No Logs Appearing in Loki / Grafana Explore
-  Cause: Promtail not reading Docker logs or no access to docker.sock.
-  Fix: Ensure promtail has volume - /var/run/docker.sock:/var/run/docker.sock and container is running as root.
+#### No Logs Appearing in Loki / Grafana Explore
+  **Cause:** Promtail not reading Docker logs or no access to docker.sock.
+  **Fix:** Ensure promtail has volume - /var/run/docker.sock:/var/run/docker.sock and container is running as root.
 
-- cAdvisor Metrics Missing
-  Cause: cAdvisor missing required Docker volumes.
-  Fix: Ensure these mounts exist:
+#### cAdvisor Metrics Missing
+  **Cause:** cAdvisor missing required Docker volumes.
+  **Fix:** Ensure these mounts exist:
+  ```bash
   /var/lib/docker/:/var/lib/docker:ro and - /sys/fs/cgroup:/sys/fs/cgroup:ro.
+  ```
 
-- Containers Not Starting / Restarting Continuously
-  Cause: Port conflicts or incorrect YAML indentation.
-  Fix: Check if ports (3000, 9090, 3100, etc.) are already used, and validate YAML syntax.
+#### Containers Not Starting / Restarting Continuously
+  **Cause:** Port conflicts or incorrect YAML indentation.
+  **Fix:** Check if ports (3000, 9090, 3100, etc.) are already used, and validate YAML syntax.
 
 ### Conclusion
 
