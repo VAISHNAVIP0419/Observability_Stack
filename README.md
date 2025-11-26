@@ -39,12 +39,14 @@ This project includes three microservices running via Docker Compose:
 - **Database Service** (MongoDB)
 
 To start the services, run:
+
 ```bash
 docker compose up -d
 ```
 <img width="921" height="74" alt="Screenshot 2025-11-25 231109" src="https://github.com/user-attachments/assets/6216ddc5-097e-4842-9c8c-c34531ade63e" />
 
 Verify running containers using:
+
 ```bash
 docker ps
 ```
@@ -80,10 +82,11 @@ Open the URL in a browser:
 http://localhost:9090
 ```
 
-Screenshot to capture:
+
 <img width="1365" height="501" alt="image" src="https://github.com/user-attachments/assets/7264ebff-dcfe-48e6-a8f8-ed5cbdc3cd59" />
 
 Prometheus Targets page	Go to Status → Targets showing cadvisor and prometheus as UP
+
 #### Path: Prometheus → Status → Targets
 
 <img width="1365" height="584" alt="image" src="https://github.com/user-attachments/assets/493742fa-5250-4555-8125-d3393f2100f6" />
@@ -94,6 +97,7 @@ Prometheus Targets page	Go to Status → Targets showing cadvisor and prometheus
 cAdvisor provides real-time metrics for CPU, memory, network, and disk of each Docker container. Prometheus scrapes metrics from cAdvisor and sends them to Grafana for visualization.
 
 Access cAdvisor web UI : 
+
 ```bash 
 http://localhost:8080/containers/
 ```
@@ -106,24 +110,26 @@ http://localhost:8080/containers/
 Grafana is used to visualize both metrics (Prometheus) and logs (Loki) by configuring them as data sources.
 
 Access Grafana :
+
 ```bash
 http://localhost:3001/
 ```
 
 
 Default credentials:
+
 ```bash
 username: admin
 password: admin
 ```
+
 <img width="1365" height="667" alt="image" src="https://github.com/user-attachments/assets/7cdf3dd2-46a6-4e57-9a16-943505b34302" />
+
 
 #### Add Prometheus Datasource in Grafana
 
 Go to Settings → Data Sources
-
 Click Add data source
-
 Select Prometheus
 
 Set URL:
@@ -138,9 +144,7 @@ Click Save & Test → should show "Data source is working"
 #### Add Loki Datasource in Grafana (Log Storage)
 
 Go to Settings → Data Sources
-
 Click Add data source
-
 Select Loki
 
 Set URL:
@@ -149,6 +153,7 @@ http://loki:3100
 ```
 
 Click Save & Test
+
 <img width="1366" height="1674" alt="screencapture-localhost-3001-connections-datasources-edit-df59db52pkmioe-2025-11-26-12_42_16" src="https://github.com/user-attachments/assets/59281e26-7534-4eb1-a840-eca08a7655b4" />
 
 <img width="1365" height="654" alt="image" src="https://github.com/user-attachments/assets/2c2ccd78-0d96-4abb-9556-cb33d0f4eb10" />
@@ -160,13 +165,14 @@ We will import a pre-built dashboard to visualize container CPU, memory, and net
 #### Steps to import dashboard
 
 Go to Grafana → Dashboards → Import
-
 Enter Dashboard ID:
+
 ```bash
 893  (Docker & system metrics)
 ```
 
 or
+
 ```bash
 193  (cAdvisor exporter container metrics)
 ```
@@ -180,9 +186,7 @@ Choose Prometheus datasource
 Promtail collects container logs and pushes them to Loki. Logs are viewed inside Grafana using the Explore tab.
 
 Steps to View Logs
-
 Go to Grafana → Explore
-
 Select Loki datasource
 
 Run query:
@@ -191,9 +195,11 @@ Run query:
 ```
 
 To filter specific container logs:
+
 ```bash
 {container="observability_backend"}
 ```
+
 Enable Live Log Streaming:
 
 Click Live → it will show real-time logs
@@ -212,40 +218,30 @@ Create dashboard with both metrics & logs panels together for real-time monitori
 
 
 ### Troubleshooting
-Prometheus Targets Showing “DOWN”
 
-Cause: Wrong service name/port in prometheus.yml.
+- Prometheus Targets Showing “DOWN”
+  Cause: Wrong service name/port in prometheus.yml.
+  Fix: Verify target names match docker-compose service names and ports.
 
-Fix: Verify target names match docker-compose service names and ports.
+- Grafana Not Showing Metrics
+  Cause: Wrong datasource URL (Prometheus not reachable).
+  Fix: Set Prometheus datasource URL to http://prometheus:9090 inside Grafana.
 
-Grafana Not Showing Metrics
+- No Logs Appearing in Loki / Grafana Explore
+  Cause: Promtail not reading Docker logs or no access to docker.sock.
+  Fix: Ensure promtail has volume - /var/run/docker.sock:/var/run/docker.sock and container is running as root.
 
-Cause: Wrong datasource URL (Prometheus not reachable).
+- cAdvisor Metrics Missing
+  Cause: cAdvisor missing required Docker volumes.
+  Fix: Ensure these mounts exist:
+  /var/lib/docker/:/var/lib/docker:ro and - /sys/fs/cgroup:/sys/fs/cgroup:ro.
 
-Fix: Set Prometheus datasource URL to http://prometheus:9090 inside Grafana.
-
-No Logs Appearing in Loki / Grafana Explore
-
-Cause: Promtail not reading Docker logs or no access to docker.sock.
-
-Fix: Ensure promtail has volume - /var/run/docker.sock:/var/run/docker.sock and container is running as root.
-
-cAdvisor Metrics Missing
-
-Cause: cAdvisor missing required Docker volumes.
-
-Fix: Ensure these mounts exist:
-- /var/lib/docker/:/var/lib/docker:ro and - /sys/fs/cgroup:/sys/fs/cgroup:ro.
-
-Containers Not Starting / Restarting Continuously
-
-Cause: Port conflicts or incorrect YAML indentation.
-
-Fix: Check if ports (3000, 9090, 3100, etc.) are already used, and validate YAML syntax.
-Common checks:
+- Containers Not Starting / Restarting Continuously
+  Cause: Port conflicts or incorrect YAML indentation.
+  Fix: Check if ports (3000, 9090, 3100, etc.) are already used, and validate YAML syntax.
 
 ### Conclusion
 
 This project demonstrates a complete DevOps observability stack that enables real-time performance monitoring and centralized log aggregation for containerized applications. Using Prometheus, Grafana, cAdvisor, Loki, and Promtail, we successfully visualized CPU, memory, network usage, and live application logs, ensuring simplified debugging, improved reliability, and enhanced observability.
 
-## completed!
+### completed!
