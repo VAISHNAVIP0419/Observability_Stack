@@ -220,27 +220,35 @@ Create dashboard with both metrics & logs panels together for real-time monitori
 ### Troubleshooting
 
 #### Prometheus Targets Showing “DOWN”
-  **Cause:** Wrong service name/port in prometheus.yml.
-  **Fix:** Verify target names match docker-compose service names and ports.
+**Cause:** Wrong service name/port in `prometheus.yml`.  
+**Fix:**  
+Verify target names match Docker Compose service names and ports.
 
 #### Grafana Not Showing Metrics
-  **Cause:** Wrong datasource URL (Prometheus not reachable).
-  **Fix:** Set Prometheus datasource URL to http://prometheus:9090 inside Grafana.
+**Cause:** Wrong datasource URL (Prometheus not reachable).  
+**Fix:**  
+Set Prometheus datasource URL to `http://prometheus:9090` inside Grafana.
 
 #### No Logs Appearing in Loki / Grafana Explore
-  **Cause:** Promtail not reading Docker logs or no access to docker.sock.
-  **Fix:** Ensure promtail has volume - /var/run/docker.sock:/var/run/docker.sock and container is running as root.
+**Cause:** Promtail not reading Docker logs or no access to `docker.sock`.  
+**Fix:**  
+Ensure Promtail has the Docker socket mounted and the container has the required permissions, for example:
+- `- /var/run/docker.sock:/var/run/docker.sock`  
+Also confirm the Promtail container is running with privileges that allow reading the socket.
 
 #### cAdvisor Metrics Missing
-  **Cause:** cAdvisor missing required Docker volumes.
-  **Fix:** Ensure these mounts exist:
-  ```bash
-  /var/lib/docker/:/var/lib/docker:ro and - /sys/fs/cgroup:/sys/fs/cgroup:ro.
-  ```
+**Cause:** cAdvisor missing required Docker volumes.  
+**Fix:**  
+Make sure the following mounts are present (example Docker Compose mount format):
+
+    - /var/lib/docker/:/var/lib/docker:ro
+    - /sys/fs/cgroup:/sys/fs/cgroup:ro
 
 #### Containers Not Starting / Restarting Continuously
-  **Cause:** Port conflicts or incorrect YAML indentation.
-  **Fix:** Check if ports (3000, 9090, 3100, etc.) are already used, and validate YAML syntax.
+**Cause:** Port conflicts or incorrect YAML indentation.  
+**Fix:**  
+Check if ports (e.g. `3000`, `9090`, `3100`) are already used on the host, and validate your YAML syntax (use `docker-compose config` to help detect indentation/format errors).
+
 
 ### Conclusion
 
